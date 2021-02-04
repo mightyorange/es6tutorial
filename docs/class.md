@@ -38,9 +38,9 @@ class Point {
 }
 ```
 
-上面代码定义了一个“类”，可以看到里面有一个`constructor`方法，这就是构造方法，而`this`关键字则代表实例对象。也就是说，ES5 的构造函数`Point`，对应 ES6 的`Point`类的构造方法。
+上面代码定义了一个“类”，可以看到里面有一个`constructor()`方法，这就是构造方法，而`this`关键字则代表实例对象。这种新的 Class 写法，本质上与本章开头的 ES5 的构造函数`Point`是一致的。
 
-`Point`类除了构造方法，还定义了一个`toString`方法。注意，定义“类”的方法的时候，前面不需要加上`function`这个关键字，直接把函数定义放进去了就可以了。另外，方法之间不需要逗号分隔，加了会报错。
+`Point`类除了构造方法，还定义了一个`toString()`方法。注意，定义`toString()`方法的时候，前面不需要加上`function`这个关键字，直接把函数定义放进去了就可以了。另外，方法与方法之间不需要逗号分隔，加了会报错。
 
 ES6 的类，完全可以看作构造函数的另一种写法。
 
@@ -64,7 +64,7 @@ class Bar {
   }
 }
 
-var b = new Bar();
+const b = new Bar();
 b.doStuff() // "stuff"
 ```
 
@@ -94,18 +94,20 @@ Point.prototype = {
 };
 ```
 
-在类的实例上面调用方法，其实就是调用原型上的方法。
+上面代码中，`constructor()`、`toString()`、`toValue()`这三个方法，其实都是定义在`Point.prototype`上面。
+
+因此，在类的实例上面调用方法，其实就是调用原型上的方法。
 
 ```javascript
 class B {}
-let b = new B();
+const b = new B();
 
 b.constructor === B.prototype.constructor // true
 ```
 
-上面代码中，`b`是`B`类的实例，它的`constructor`方法就是`B`类原型的`constructor`方法。
+上面代码中，`b`是`B`类的实例，它的`constructor()`方法就是`B`类原型的`constructor()`方法。
 
-由于类的方法都定义在`prototype`对象上面，所以类的新方法可以添加在`prototype`对象上面。`Object.assign`方法可以很方便地一次向类添加多个方法。
+由于类的方法都定义在`prototype`对象上面，所以类的新方法可以添加在`prototype`对象上面。`Object.assign()`方法可以很方便地一次向类添加多个方法。
 
 ```javascript
 class Point {
@@ -120,7 +122,7 @@ Object.assign(Point.prototype, {
 });
 ```
 
-`prototype`对象的`constructor`属性，直接指向“类”的本身，这与 ES5 的行为是一致的。
+`prototype`对象的`constructor()`属性，直接指向“类”的本身，这与 ES5 的行为是一致的。
 
 ```javascript
 Point.prototype.constructor === Point // true
@@ -145,14 +147,14 @@ Object.getOwnPropertyNames(Point.prototype)
 // ["constructor","toString"]
 ```
 
-上面代码中，`toString`方法是`Point`类内部定义的方法，它是不可枚举的。这一点与 ES5 的行为不一致。
+上面代码中，`toString()`方法是`Point`类内部定义的方法，它是不可枚举的。这一点与 ES5 的行为不一致。
 
 ```javascript
 var Point = function (x, y) {
   // ...
 };
 
-Point.prototype.toString = function() {
+Point.prototype.toString = function () {
   // ...
 };
 
@@ -162,11 +164,11 @@ Object.getOwnPropertyNames(Point.prototype)
 // ["constructor","toString"]
 ```
 
-上面代码采用 ES5 的写法，`toString`方法就是可枚举的。
+上面代码采用 ES5 的写法，`toString()`方法就是可枚举的。
 
 ### constructor 方法
 
-`constructor`方法是类的默认方法，通过`new`命令生成对象实例时，自动调用该方法。一个类必须有`constructor`方法，如果没有显式定义，一个空的`constructor`方法会被默认添加。
+`constructor()`方法是类的默认方法，通过`new`命令生成对象实例时，自动调用该方法。一个类必须有`constructor()`方法，如果没有显式定义，一个空的`constructor()`方法会被默认添加。
 
 ```javascript
 class Point {
@@ -178,9 +180,9 @@ class Point {
 }
 ```
 
-上面代码中，定义了一个空的类`Point`，JavaScript 引擎会自动为它添加一个空的`constructor`方法。
+上面代码中，定义了一个空的类`Point`，JavaScript 引擎会自动为它添加一个空的`constructor()`方法。
 
-`constructor`方法默认返回实例对象（即`this`），完全可以指定返回另外一个对象。
+`constructor()`方法默认返回实例对象（即`this`），完全可以指定返回另外一个对象。
 
 ```javascript
 class Foo {
@@ -193,7 +195,7 @@ new Foo() instanceof Foo
 // false
 ```
 
-上面代码中，`constructor`函数返回一个全新的对象，结果导致实例对象不是`Foo`类的实例。
+上面代码中，`constructor()`函数返回一个全新的对象，结果导致实例对象不是`Foo`类的实例。
 
 类必须使用`new`调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用`new`也可以执行。
 
@@ -251,7 +253,7 @@ point.hasOwnProperty('toString') // false
 point.__proto__.hasOwnProperty('toString') // true
 ```
 
-上面代码中，`x`和`y`都是实例对象`point`自身的属性（因为定义在`this`变量上），所以`hasOwnProperty`方法返回`true`，而`toString`是原型对象的属性（因为定义在`Point`类上），所以`hasOwnProperty`方法返回`false`。这些都与 ES5 的行为保持一致。
+上面代码中，`x`和`y`都是实例对象`point`自身的属性（因为定义在`this`变量上），所以`hasOwnProperty()`方法返回`true`，而`toString()`是原型对象的属性（因为定义在`Point`类上），所以`hasOwnProperty()`方法返回`false`。这些都与 ES5 的行为保持一致。
 
 与 ES5 一样，类的所有实例共享一个原型对象。
 
@@ -282,7 +284,7 @@ var p3 = new Point(4,2);
 p3.printName() // "Oops"
 ```
 
-上面代码在`p1`的原型上添加了一个`printName`方法，由于`p1`的原型就是`p2`的原型，因此`p2`也可以调用这个方法。而且，此后新建的实例`p3`也可以调用这个方法。这意味着，使用实例的`__proto__`属性改写原型，必须相当谨慎，不推荐使用，因为这会改变“类”的原始定义，影响到所有实例。
+上面代码在`p1`的原型上添加了一个`printName()`方法，由于`p1`的原型就是`p2`的原型，因此`p2`也可以调用这个方法。而且，此后新建的实例`p3`也可以调用这个方法。这意味着，使用实例的`__proto__`属性改写原型，必须相当谨慎，不推荐使用，因为这会改变“类”的原始定义，影响到所有实例。
 
 ### 取值函数（getter）和存值函数（setter）
 
@@ -371,7 +373,7 @@ const MyClass = class Me {
 };
 ```
 
-上面代码使用表达式定义了一个类。需要注意的是，这个类的名字是`MyClass`而不是`Me`，`Me`只在 Class 的内部代码可用，指代当前类。
+上面代码使用表达式定义了一个类。需要注意的是，这个类的名字是`Me`，但是`Me`只在 Class 的内部可用，指代当前类。在 Class 外部，这个类只能用`MyClass`引用。
 
 ```javascript
 let inst = new MyClass();
@@ -488,7 +490,7 @@ const { printName } = logger;
 printName(); // TypeError: Cannot read property 'print' of undefined
 ```
 
-上面代码中，`printName`方法中的`this`，默认指向`Logger`类的实例。但是，如果将这个方法提取出来单独使用，`this`会指向该方法运行时所在的环境，因为找不到`print`方法而导致报错。
+上面代码中，`printName`方法中的`this`，默认指向`Logger`类的实例。但是，如果将这个方法提取出来单独使用，`this`会指向该方法运行时所在的环境（由于 class 内部是严格模式，所以 this 实际指向的是`undefined`），从而导致找不到`print`方法而报错。
 
 一个比较简单的解决方法是，在构造方法中绑定`this`，这样就不会找不到`print`方法了。
 
@@ -505,16 +507,17 @@ class Logger {
 另一种解决方法是使用箭头函数。
 
 ```javascript
-class Logger {
+class Obj {
   constructor() {
-    this.printName = (name = 'there') => {
-      this.print(`Hello ${name}`);
-    };
+    this.getThis = () => this;
   }
-
-  // ...
 }
+
+const myObj = new Obj();
+myObj.getThis() === myObj // true
 ```
+
+箭头函数内部的`this`总是指向定义时所在的对象。上面代码中，箭头函数位于构造函数内部，它的定义生效的时候，是在构造函数执行的时候。这时，箭头函数所在的运行环境，肯定是实例对象，所以`this`会总是指向实例对象。
 
 还有一种解决方法是使用`Proxy`，获取方法的时候，自动绑定`this`。
 
@@ -617,7 +620,7 @@ Bar.classMethod() // "hello, too"
 
 ## 实例属性的新写法
 
-实例属性除了在`constructor()`方法里面定义，也可以直接写在类的最顶层。
+实例属性除了定义在`constructor()`方法里面的`this`上面，也可以定义在类的最顶层。
 
 ```javascript
 class IncreasingCounter {
@@ -634,7 +637,7 @@ class IncreasingCounter {
 }
 ```
 
-上面代码中，实例属性`this._count`定义在`constructor()`方法里面。另一种写法是，这个属性也可以定义在类的最顶层。
+上面代码中，实例属性`this._count`定义在`constructor()`方法里面。另一种写法是，这个属性也可以定义在类的最顶层，其他都不变。
 
 ```javascript
 class IncreasingCounter {
@@ -651,7 +654,20 @@ class IncreasingCounter {
 
 上面代码中，实例属性`_count`与取值函数`value()`和`increment()`方法，处于同一个层级。这时，不需要在实例属性前面加上`this`。
 
-这种新写法的好处是，所有实例属性都定义在类的头部，看上去比较整齐，一眼就能看出这个类有哪些实例属性。
+这种新写法的好处是，所有实例对象自身的属性都定义在类的头部，看上去比较整齐，一眼就能看出这个类有哪些实例属性。
+
+```javascript
+class foo {
+  bar = 'hello';
+  baz = 'world';
+
+  constructor() {
+    // ...
+  }
+}
+```
+
+上面的代码，一眼就能看出，`foo`类有两个实例属性，一目了然。另外，写起来也比较简洁。
 
 ## 静态属性
 
@@ -667,7 +683,7 @@ Foo.prop // 1
 
 上面的写法为`Foo`类定义了一个静态属性`prop`。
 
-目前，只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。现在有一个[提案](https://github.com/tc39/proposal-class-fields)提供了类的静态属性，写法是在实例属性法的前面，加上`static`关键字。
+目前，只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。现在有一个[提案](https://github.com/tc39/proposal-class-fields)提供了类的静态属性，写法是在实例属性的前面，加上`static`关键字。
 
 ```javascript
 class MyClass {
@@ -721,9 +737,9 @@ class Widget {
 }
 ```
 
-上面代码中，`_bar`方法前面的下划线，表示这是一个只限于内部使用的私有方法。但是，这种命名是不保险的，在类的外部，还是可以调用到这个方法。
+上面代码中，`_bar()`方法前面的下划线，表示这是一个只限于内部使用的私有方法。但是，这种命名是不保险的，在类的外部，还是可以调用到这个方法。
 
-另一种方法就是索性将私有方法移出模块，因为模块内部的所有方法都是对外可见的。
+另一种方法就是索性将私有方法移出类，因为类内部的所有方法都是对外可见的。
 
 ```javascript
 class Widget {
@@ -739,7 +755,7 @@ function bar(baz) {
 }
 ```
 
-上面代码中，`foo`是公开方法，内部调用了`bar.call(this, baz)`。这使得`bar`实际上成为了当前模块的私有方法。
+上面代码中，`foo`是公开方法，内部调用了`bar.call(this, baz)`。这使得`bar()`实际上成为了当前类的私有方法。
 
 还有一种方法是利用`Symbol`值的唯一性，将私有方法的名字命名为一个`Symbol`值。
 
@@ -763,7 +779,16 @@ export default class myClass{
 };
 ```
 
-上面代码中，`bar`和`snaf`都是`Symbol`值，导致第三方无法获取到它们，因此达到了私有方法和私有属性的效果。
+上面代码中，`bar`和`snaf`都是`Symbol`值，一般情况下无法获取到它们，因此达到了私有方法和私有属性的效果。但是也不是绝对不行，`Reflect.ownKeys()`依然可以拿到它们。
+
+```javascript
+const inst = new myClass();
+
+Reflect.ownKeys(myClass.prototype)
+// [ 'constructor', 'foo', Symbol(bar) ]
+```
+
+上面代码中，Symbol 值的属性名依然可以从类的外部拿到。
 
 ### 私有属性的提案
 
@@ -827,7 +852,7 @@ class Foo {
     this.#b = b;
   }
   #sum() {
-    return #a + #b;
+    return this.#a + this.#b;
   }
   printSum() {
     console.log(this.#sum());
@@ -901,7 +926,7 @@ FakeMath.#computeRandomNumber() // 报错
 
 ## new.target 属性
 
-`new`是从构造函数生成实例对象的命令。ES6 为`new`命令引入了一个`new.target`属性，该属性一般用在构造函数之中，返回`new`命令作用于的那个构造函数。如果构造函数不是通过`new`命令调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
+`new`是从构造函数生成实例对象的命令。ES6 为`new`命令引入了一个`new.target`属性，该属性一般用在构造函数之中，返回`new`命令作用于的那个构造函数。如果构造函数不是通过`new`命令或`Reflect.construct()`调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
 
 ```javascript
 function Person(name) {
@@ -952,8 +977,8 @@ class Rectangle {
 }
 
 class Square extends Rectangle {
-  constructor(length) {
-    super(length, length);
+  constructor(length, width) {
+    super(length, width);
   }
 }
 

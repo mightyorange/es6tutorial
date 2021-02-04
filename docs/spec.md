@@ -24,7 +24,7 @@ ES6 规格使用了一些专门的术语，了解这些术语，可以帮助你�
 
 ### 抽象操作
 
-所谓”抽象操作“（abstract operations）就是引擎的一些内部方法，外部不能调用。规格定义了一系列的抽象操作，规定了它们的行为，留给各种引擎自己去实现。
+所谓“抽象操作”（abstract operations）就是引擎的一些内部方法，外部不能调用。规格定义了一系列的抽象操作，规定了它们的行为，留给各种引擎自己去实现。
 
 举例来说，`Boolean(value)`的算法，第一步是这样的。
 
@@ -32,7 +32,7 @@ ES6 规格使用了一些专门的术语，了解这些术语，可以帮助你�
 
 这里的`ToBoolean`就是一个抽象操作，是引擎内部求出布尔值的算法。
 
-许多函数的算法都会多次用到同样的步骤，所以 ES6 规格将它们抽出来，定义成”抽象操作“，方便描述。
+许多函数的算法都会多次用到同样的步骤，所以 ES6 规格将它们抽出来，定义成“抽象操作”，方便描述。
 
 ### Record 和 field
 
@@ -70,12 +70,12 @@ F.[[Call]](V, argumentsList)
 
 抽象操作的运行流程，一般是下面这样。
 
-> 1. Let `resultCompletionRecord` be `AbstractOp()`.
-> 1. If `resultCompletionRecord` is an abrupt completion, return `resultCompletionRecord`.
-> 1. Let `result` be `resultCompletionRecord.[[Value]]`.
+> 1. Let `result` be `AbstractOp()`.
+> 1. If `result` is an abrupt completion, return `result`.
+> 1. Set `result` to `result.[[Value]]`.
 > 1. return `result`.
 
-上面的第一步是调用抽象操作`AbstractOp()`，得到`resultCompletionRecord`，这是一个 Completion Record。第二步，如果这个 Record 属于 abrupt completion，就将`resultCompletionRecord`返回给用户。如果此处没有返回，就表示运行结果正常，所得的值存放在`resultCompletionRecord.[[Value]]`属性。第三步，将这个值记为`result`。第四步，将`result`返回给用户。
+上面的第一步调用了抽象操作`AbstractOp()`，得到`result`，这是一个 Completion Record。第二步，如果`result`属于 abrupt completion，就直接返回。如果此处没有返回，表示`result`属于 normal completion。第三步，将`result`的值设置为`resultCompletionRecord.[[Value]]`。第四步，返回`result`。
 
 ES6 规格将这个标准流程，使用简写的方式表达。
 
@@ -127,15 +127,15 @@ ES6 规格将这个标准流程，使用简写的方式表达。
 >    1. Return the result of performing Strict Equality Comparison `x === y`.
 > 1. If `x` is `null` and `y` is `undefined`, return `true`.
 > 1. If `x` is `undefined` and `y` is `null`, return `true`.
-> 1. If `Type(x)` is Number and `Type(y)` is String, 
+> 1. If `Type(x)` is Number and `Type(y)` is String,
 >    return the result of the comparison `x == ToNumber(y)`.
-> 1. If `Type(x)` is String and `Type(y)` is Number, 
+> 1. If `Type(x)` is String and `Type(y)` is Number,
 >    return the result of the comparison `ToNumber(x) == y`.
 > 1. If `Type(x)` is Boolean, return the result of the comparison `ToNumber(x) == y`.
 > 1. If `Type(y)` is Boolean, return the result of the comparison `x == ToNumber(y)`.
-> 1. If `Type(x)` is either String, Number, or Symbol and `Type(y)` is Object, then 
+> 1. If `Type(x)` is either String, Number, or Symbol and `Type(y)` is Object, then
 >    return the result of the comparison `x == ToPrimitive(y)`.
-> 1. If `Type(x)` is Object and `Type(y)` is either String, Number, or Symbol, then 
+> 1. If `Type(x)` is Object and `Type(y)` is either String, Number, or Symbol, then
 >    return the result of the comparison `ToPrimitive(x) == y`.
 > 1. Return `false`.
 
